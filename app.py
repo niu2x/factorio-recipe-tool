@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request, redirect, url_for
 from flask import render_template
 import os
+# import diff
 import subprocess
 
 app = Flask(__name__)
@@ -59,7 +60,16 @@ def hello_world(last_graph):
 		data = line.split(',')
 		if len(data) == 2:
 			non_final_items.append({'id':data[0], 'display_name':data[1].decode('utf-8')})
-	non_final_items.sort()
+
+	def cmp(x, y):
+		if x['id'] < y['id']:
+			return -1
+		elif  x['id'] == y['id']:
+			return 0
+		else:
+			return 1
+			
+	non_final_items.sort(cmp)
 	fp.close()
 	del fp
 
