@@ -58,6 +58,7 @@ local locale = require 'locale'
 -- end, items)))
 
 local final_items = {
+	'crude-oil',
 	'copper-plate',
 	'iron-plate',
 	'stone-brick',
@@ -75,19 +76,19 @@ local final_items = {
 	-- 'advanced-circuit',
 }
 
-local products = {
-	'iron-gear-wheel',
-	'electronic-circuit',
-	'automation-science-pack',
-	'chemical-science-pack',
-	'logistic-science-pack',
-	'military-science-pack',
-	'production-science-pack',
-	'utility-science-pack',
-}
+-- local products = {
+-- 	-- 'iron-gear-wheel',
+-- 	-- 'electronic-circuit',
+-- 	'automation-science-pack',
+-- 	'chemical-science-pack',
+-- 	'logistic-science-pack',
+-- 	'military-science-pack',
+-- 	'production-science-pack',
+-- 	'utility-science-pack',
+-- }
 
 
-local function resolve( ... )
+local function resolve( products )
 
 	local resolved = {}
 
@@ -102,10 +103,12 @@ local function resolve( ... )
 
 		elseif table.includes(final_items, top) then
 			resolved[top] = true
+		elseif not recipe_map[top] then
+			resolved[top] = true
 		else
 			resolved[top] = true
 			local recipe = recipe_map[top]
-			-- print('top', top)
+			io.stderr:write('top ', top, locale(top), '\n')
 
 			for _, v in ipairs(recipe.ingredients) do
 				table.insert(queue, v.name or v[1])
@@ -117,7 +120,7 @@ local function resolve( ... )
 	local edges = {}
 	for item, _ in pairs(resolved) do
 		if not table.includes(final_items, item) then
-			for _, v in ipairs((recipe_map[item] or {}).ingredients) do
+			for _, v in ipairs((recipe_map[item] or {}).ingredients or {}) do
 				table.insert(edges, {v.name or v[1], item})
 			end
 		end
@@ -134,5 +137,32 @@ local function resolve( ... )
 
 end
 
-print(resolve())
+-- print(resolve())
+
+local function print_non_final_items( ... )
+	local items = table.filter(items, function ( v )
+		return not table.includes(final_items, v)
+	end)
+
+	for _, v in ipairs(items) do
+		print(v .. ',' .. locale(v))
+	end
+end
+
+if arg[1] == 'resolve' then
+
+	-- print()
+	local products = io.read('*all'):split('\n')
+	-- print(table.tostring(products))
+	products = table.map(function(v)
+		v = string.gsub(v, '\r', '')
+		v = string.gsub(v, ' ', '')
+		return v
+	end, products)
+	print(resolve(products))
+
+	-- print(resolve())
+elseif arg[1] == 'non-final-items' then
+	print_non_final_items()
+end
 

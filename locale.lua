@@ -14,6 +14,7 @@ for _, line in ipairs(lines) do
 		result[2] = string.gsub(result[2], '%(', '（')
 		result[2] = string.gsub(result[2], '%)', '）')
 		result[2] = string.gsub(result[2], ' ', '')
+		result[2] = string.gsub(result[2], '-', '')
 		dict[result[1]] = result[2]
 	end
 end

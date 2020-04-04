@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>factorio-recipe</title>
+</head>
+<body>
+
+	<form action="/fuck/_" method="post"> 
+		<ul>
+			<li>
+				<select multiple="multiple" size="23" name="products">
+				  {% for v in non_final_items %}
+				  <option value="{{v.id}}">{{v.display_name}}</option>
+				  {% endfor %}
+				</select>
+			</li>
+
+			<li>
+				<input type="submit" name="fuck" />
+			</li>
+		</ul>
+	</form> 
+
+	{% if graph %}
+	<img src="/{{graph}}">
+	{% endif %}
+
+
+</body>
+</html>
